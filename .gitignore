@@ -50,3 +50,6 @@ GoogleService-Info.plist
 
 # Widget Preview related
 .widget_preview/
+
+#Local API
+recipe.json
