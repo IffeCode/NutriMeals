@@ -1,16 +1,77 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
-  Future<void> logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
 
-    if (!context.mounted) return;
+class _ProfilePageState extends State<ProfilePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference _database =
+  FirebaseDatabase.instance.ref();
+
+  Map<String, dynamic>? userData;
+
+  bool isLoading = true;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserProfile();
+  }
+
+  Future<void> loadUserProfile() async {
+    final user = _auth.currentUser;
+
+    if (user == null) {
+      setState(() {
+        error = 'No user is currently logged in.';
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final snapshot = await _database
+          .child('users')
+          .child(user.uid)
+          .get();
+
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(
+          snapshot.value as Map,
+        );
+
+        setState(() {
+          userData = data;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          error = 'No profile information was found.';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        error = 'Could not load your profile.';
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> logout() async {
+    await _auth.signOut();
+
+    if (!mounted) return;
 
     Navigator.pushAndRemoveUntil(
       context,
@@ -23,13 +84,25 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Profile'),
       ),
-      body: Padding(
+      body: isLoading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : error != null
+          ? Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            error!,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      )
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,33 +115,69 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
-
-            const Text(
-              'My Profile',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
             const SizedBox(height: 20),
 
-            Text(
-              'Email',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              user?.email ?? 'No email found',
-              style: const TextStyle(
-                fontSize: 16,
+            Center(
+              child: Text(
+                userData?['username'] ?? 'User',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 
             const SizedBox(height: 30),
+
+            profileItem(
+              'Username',
+              userData?['username'],
+              Icons.person,
+            ),
+
+            profileItem(
+              'Email',
+              userData?['email'],
+              Icons.email,
+            ),
+
+            profileItem(
+              'First name',
+              userData?['firstName'],
+              Icons.person_outline,
+            ),
+
+            profileItem(
+              'Last name',
+              userData?['lastName'],
+              Icons.person_outline,
+            ),
+
+            profileItem(
+              'Gender',
+              userData?['gender'],
+              Icons.people,
+            ),
+
+            profileItem(
+              'Date of birth',
+              userData?['dateOfBirth'],
+              Icons.calendar_today,
+            ),
+
+            profileItem(
+              'Height',
+              '${userData?['height'] ?? '-'} cm',
+              Icons.height,
+            ),
+
+            profileItem(
+              'Weight',
+              '${userData?['weight'] ?? '-'} kg',
+              Icons.monitor_weight,
+            ),
+
+            const SizedBox(height: 20),
 
             SizedBox(
               width: double.infinity,
@@ -77,11 +186,14 @@ class ProfilePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomePage(),
+                      builder: (context) =>
+                      const HomePage(),
                     ),
                   );
                 },
-                child: const Text('Continue to NutriMeals'),
+                child: const Text(
+                  'Continue to NutriMeals',
+                ),
               ),
             ),
 
@@ -91,23 +203,49 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // Edit Profile will be added here.
+                  // Edit Profile will be added next.
                 },
-                child: const Text('Edit Profile'),
+                child: const Text(
+                  'Edit Profile',
+                ),
               ),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 12),
 
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => logout(context),
+                onPressed: logout,
                 icon: const Icon(Icons.logout),
                 label: const Text('Log out'),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget profileItem(
+      String label,
+      dynamic value,
+      IconData icon,
+      ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Card(
+        child: ListTile(
+          leading: Icon(icon),
+          title: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            value?.toString() ?? '-',
+          ),
         ),
       ),
     );
