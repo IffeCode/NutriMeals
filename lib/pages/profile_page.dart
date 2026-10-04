@@ -27,7 +27,7 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Min profil'),
+        title: const Text('My Profile'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -45,7 +45,7 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 24),
 
             const Text(
-              'Min profil',
+              'My Profile',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -55,14 +55,14 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 20),
 
             Text(
-              'E-post',
+              'Email',
               style: Theme.of(context).textTheme.titleMedium,
             ),
 
             const SizedBox(height: 4),
 
             Text(
-              user?.email ?? 'Ingen e-post hittades',
+              user?.email ?? 'No email found',
               style: const TextStyle(
                 fontSize: 16,
               ),
@@ -81,7 +81,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('Fortsätt till NutriMeals'),
+                child: const Text('Continue to NutriMeals'),
               ),
             ),
 
@@ -91,9 +91,9 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // Edit Profile kommer här senare.
+                  // Edit Profile will be added here.
                 },
-                child: const Text('Redigera profil'),
+                child: const Text('Edit Profile'),
               ),
             ),
 
@@ -104,7 +104,7 @@ class ProfilePage extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => logout(context),
                 icon: const Icon(Icons.logout),
-                label: const Text('Logga ut'),
+                label: const Text('Log out'),
               ),
             ),
           ],

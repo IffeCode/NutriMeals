@@ -5,7 +5,6 @@ import 'home_page.dart';
 import 'profile_page.dart';
 import 'register_page.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      showMessage('Fyll i både e-post och lösenord.');
+      showMessage('Please enter both email and password.');
       return;
     }
 
@@ -57,33 +56,33 @@ class _LoginPageState extends State<LoginPage> {
 
       switch (e.code) {
         case 'invalid-email':
-          message = 'Ogiltig e-postadress.';
+          message = 'Invalid email address.';
           break;
 
         case 'user-not-found':
-          message = 'Det finns inget konto med denna e-postadress.';
+          message = 'No account was found with this email address.';
           break;
 
         case 'wrong-password':
         case 'invalid-credential':
-          message = 'Fel e-postadress eller lösenord.';
+          message = 'Incorrect email or password.';
           break;
 
         case 'user-disabled':
-          message = 'Detta konto är inaktiverat.';
+          message = 'This account has been disabled.';
           break;
 
         case 'too-many-requests':
-          message = 'För många försök. Försök igen senare.';
+          message = 'Too many attempts. Please try again later.';
           break;
 
         default:
-          message = 'Något gick fel. Försök igen.';
+          message = 'Something went wrong. Please try again.';
       }
 
       showMessage(message);
     } catch (e) {
-      showMessage('Något gick fel. Försök igen.');
+      showMessage('Something went wrong. Please try again.');
     } finally {
       if (mounted) {
         setState(() {
@@ -146,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 8),
 
                 const Text(
-                  'Hitta recept utifrån det du har hemma.',
+                  'Find recipes based on the ingredients you have.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -159,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    labelText: 'E-post',
+                    labelText: 'Email',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),
@@ -171,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordController,
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Lösenord',
+                    labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
@@ -203,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: CircularProgressIndicator(),
                     )
                         : const Text(
-                      'Logga in',
+                      'Log in',
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -223,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                   child: const Text(
-                    'Skapa ett konto',
+                    'Create an account',
                   ),
                 ),
 
@@ -236,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                 OutlinedButton(
                   onPressed: continueAsGuest,
                   child: const Text(
-                    'Fortsätt som gäst',
+                    'Continue as guest',
                   ),
                 ),
               ],
