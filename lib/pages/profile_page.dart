@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import 'edit_profile_page.dart';
 import 'home_page.dart';
 import 'login_page.dart';
 
@@ -202,8 +203,19 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () {
-                  // Edit Profile will be added next.
+                onPressed: () async {
+                  final updated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(
+                        userData: userData!,
+                      ),
+                    ),
+                  );
+
+                  if (updated == true && mounted) {
+                    await loadUserProfile();
+                  }
                 },
                 child: const Text(
                   'Edit Profile',
