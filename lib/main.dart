@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
-import 'services/api_service.dart';
+import 'pages/login_page.dart';
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,19 +13,24 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final apiService = ApiService();
+  runApp(const NutriMealsApp());
+}
 
-  try {
-    final recipe = await apiService.getRecipe(637942);
+class NutriMealsApp extends StatelessWidget {
+  const NutriMealsApp({super.key});
 
-    print('Recipe: ${recipe['title']}');
-    print('Image: ${recipe['image']}');
-  } catch (e) {
-    print('API ERROR: $e');
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'NutriMeals',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+        ),
+        useMaterial3: true,
+      ),
+      home: const LoginPage(),
+    );
   }
-
-  runApp(const MaterialApp(
-      home: Scaffold(
-          body: Center(
-            child: Text('API test'),);
 }

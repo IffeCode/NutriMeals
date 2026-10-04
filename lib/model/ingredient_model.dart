@@ -14,11 +14,15 @@ class IngredientModel {
   });
 
   factory IngredientModel.fromJson(Map<String, dynamic> json) {
+    final measures = json['measures'] as Map<String, dynamic>?;
+
+    final metric = measures?['metric'] as Map<String, dynamic>?;
+
     return IngredientModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      amount: (json['amount'] ?? 0).toDouble(),
-      unit: json['unit'] ?? '',
+      amount: (metric?['amount'] ?? json['amount'] ?? 0).toDouble(),
+      unit: metric?['unit'] ?? json['unit'] ?? '',
       image: json['image'] ?? '',
     );
   }
